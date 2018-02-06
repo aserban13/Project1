@@ -11,15 +11,15 @@ def opening_json_file(url):
 	for text in range(len(sample_load)):
 		if sample_load[text]["wrapperType"] == "track":
 			if sample_load[text]["kind"] == "song":
-				print("This is a song")
-				print(Song(json_dict=sample_load[text]))
+				# print("This is a song")
+				return Song(json_dict=sample_load[text])
 			elif sample_load[text]["kind"] == "feature-movie":
-				print("This is a movie")
-				print(Movie(json_dict=sample_load[text]))
+				# print("This is a movie")
+				return Movie(json_dict=sample_load[text])
 			else:
-				print("This is a media")
-				print(Media(json_dict=sample_load[text]))
-
+				# print("This is a media")
+				return Media(json_dict=sample_load[text])
+	sample_file.close()
 
 
 
@@ -74,6 +74,7 @@ class Song(Media):
 	def __init__(self, title="No Title", author="No Author", release_year="0000", album="No Album", genre="None", track_len='0', json_dict=None):
 		if json_dict is not None:
 			super().__init__(title, author, release_year, json_dict)
+			self.title = json_dict["trackName"]
 			self.album = json_dict["collectionName"]
 			self.genre = json_dict["primaryGenreName"]
 			self.track = json_dict["trackTimeMillis"]
@@ -106,6 +107,7 @@ class Movie(Media):
 	def __init__(self, title="No Title", author="No Author", release_year="0000", rating="No Rating", movie_len="0", json_dict=None):
 		if json_dict is not None:
 			super().__init__(title, author, release_year, json_dict)
+			self.title = json_dict["trackName"]
 			self.rat = json_dict["contentAdvisoryRating"]
 			self.ml = json_dict["trackTimeMillis"]
 		else:

@@ -1,12 +1,13 @@
 import unittest
+import json
 import proj1_w18 as proj1 #changed name to proj1
 
 class TestMedia(unittest.TestCase):
 
 # This tests the __init__ function in the Media Class
     def testConstructor(self):
-        m1 = proj1.Media()
-        m2 = proj1.Media("1999", "Prince", "1999")
+        m1 = proj1.Media(json_dict=None)
+        m2 = proj1.Media("1999", "Prince", "1999", json_dict=None)
 
         self.assertEqual(m1.title, "No Title")
         self.assertEqual(m1.author, "No Author")
@@ -17,12 +18,12 @@ class TestMedia(unittest.TestCase):
 
 # This tests the __str__ function in the Media Class
     def test_print(self):
-        m1 = proj1.Media()
-        m2 = proj1.Media()
+        m1 = proj1.Media(json_dict=None)
+        m2 = proj1.Media(json_dict=None)
         self.assertEqual(str(m1), str(m2))
 
-        m3 = proj1.Media()
-        m4 = proj1.Media("1999", "Prince", "1999")
+        m3 = proj1.Media(json_dict=None)
+        m4 = proj1.Media("1999", "Prince", "1999", json_dict=None)
         self.assertFalse(str(m3) == str(m4))
 
         self.assertEqual(str(m3), "No Title by No Author (0000)")
@@ -30,18 +31,30 @@ class TestMedia(unittest.TestCase):
 
 # This tests the __len__ function in the Media Class
     def test_length(self):
-        m1 = proj1.Media()
-        m2 = proj1.Media("1999", "Prince")
+        m1 = proj1.Media(json_dict=None)
+        m2 = proj1.Media("1999", "Prince", json_dict=None)
         self.assertEqual(len(m1), 0)
         self.assertEqual(len(m2), 0)
 
-        m3 = proj1.Media("1999", "Prince", "3:19")
+        m3 = proj1.Media("1999", "Prince", "3:19", json_dict=None)
         self.assertEqual(len(m3), 0)
 # Tests out json file and if it is extracting all the data
 # and outputs the correct information
     def test_sample_med(self):
         url_name = "sample_json.json"
-        m1 = proj1.opening_json_file(url_name)
+        sample_file = open((url_name), 'r')
+        sample_data = sample_file.read()
+        sample_load = json.loads(sample_data)
+        m1 = proj1.Media(json_dict=sample_load[2])
+        self.assertEqual(m1.title, "Bridget Jones's Diary (Unabridged)")
+        self.assertEqual(m1.author, "Helen Fielding")
+        self.assertEqual(m1.release, "2012")
+        sample_file.close()
+
+
+
+        # self.assertEqual(m1.)
+
 
 
 
@@ -97,8 +110,19 @@ class TestSong(unittest.TestCase):
         self.assertEqual(len(s2), 187)
 # Tests out json file and if it is extracting all the data
 # and outputs the correct information
-    def test_json(self):
-        pass
+    def test_sample_song(self):
+        url_name = "sample_json.json"
+        sample_file = open((url_name), 'r')
+        sample_data = sample_file.read()
+        sample_load = json.loads(sample_data)
+        s1 = proj1.Song(json_dict=sample_load[1])
+        self.assertEqual(s1.title, "Hey Jude")
+        self.assertEqual(s1.author, "The Beatles")
+        self.assertEqual(s1.release, "1968")
+        self.assertEqual(s1.album, "TheBeatles 1967-1970 (The Blue Album)")
+        self.assertEqual(s1.genre, "Rock")
+        self.assertEqual(s1.track, 431333)
+        sample_file.close()
 
 
 
@@ -142,6 +166,16 @@ class TestMovie(unittest.TestCase):
         self.assertEqual(len(m2), 124)
 # Tests out json file and if it is extracting all the data
 # and outputs the correct information
-    def test_json(self):
-        pass
+    def test_sample_movie(self):
+        url_name = "sample_json.json"
+        sample_file = open((url_name), 'r')
+        sample_data = sample_file.read()
+        sample_load = json.loads(sample_data)
+        m1 = proj1.Movie(json_dict=sample_load[0])
+        self.assertEqual(m1.title, "Jaws")
+        self.assertEqual(m1.author, "Steven Spielberg")
+        self.assertEqual(m1.release, "1975")
+        self.assertEqual(m1.rat, "PG")
+        self.assertEqual(m1.ml, 7451455)
+        sample_file.close()
 unittest.main()  #don't remove this line!
