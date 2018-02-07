@@ -1,6 +1,7 @@
 import json
 import requests
 import math
+import webbrowser
 # import sample_json.txt
 
 # Media:
@@ -19,6 +20,7 @@ class Media:
 			self.author = json_dict["artistName"]
 			self.release = json_dict["releaseDate"]
 			self.release = self.release[:4]
+			self.url = json_dict["trackViewUrl"]
 		else:
 			self.title = title
 			self.author = author
@@ -104,32 +106,105 @@ class Movie(Media):
 #param: a key search string
 #return: a list of the 50 results that show up
 result_list = []
+song_list = []
+movie_list = []
+media_list = []
+
 def itunes_search(query="##!!"):
 	data = requests.get('https://itunes.apple.com/search?', params = { 'term' : query})
 	sample_load = json.loads(data.text)['results']
 # print(sample_load)
+	num = 0
+	del result_list[:]
+	del song_list[:]
+	del movie_list[:]
+	del media_list[:]
 	for text in range(len(sample_load)):
 		if sample_load[text]["wrapperType"] == "track":
 			if sample_load[text]["kind"] == "song":
-				results = "This is a song"
-				print(Song(json_dict=sample_load[text]))
-			elif sample_load[text]["kind"] == "feature-movie":
-				results = "This is a movie"
-				Movie(json_dict=sample_load[text])
-			else:
-				results= "This is a media"
-				result_list.append(results)
+				found_song = Song(json_dict=sample_load[text])
+				num += 1
+				tup = (num, found_song, found_song.url)
+				song = found_song
+				results = found_song
+				song_list.append(tup)
+				result_list.append(tup)
 
+
+	for text in range(len(sample_load)):
+		if sample_load[text]["wrapperType"] == "track":
+			if sample_load[text]["kind"] == "feature-movie":
+				found_movie = Movie(json_dict=sample_load[text])
+				num += 1
+				tup = (num, found_movie, found_movie.url)
+				movie = found_movie
+				results = found_movie
+				movie_list.append(tup)
+				result_list.append(tup)
+
+
+	for text in range(len(sample_load)):
+		if sample_load[text]["kind"] != "feature-movie":
+			if sample_load[text]["kind"] != "song":
+				found_media = Media(json_dict=sample_load[text])
+				num += 1
+				tup = (num, found_media, found_media.url)
+				media = found_media
+				results= found_media
+				media_list.append(tup)
+				result_list.append(tup)
+
+
+def print_itunes():
+	print("\nSONGS")
+	for song in song_list:
+		print(song[0], song[1])
+
+	print("\nMOVIES")
+	for movie in movie_list:
+		print(movie[0], movie[1])
+
+	print("\nOTHER MEDIA")
+	for media in media_list:
+		print(media[0], media[1])
+	print("\n\n")
+
+def access_itunes_web(inputs):
+	try:
+		num = int(inputs)
+		for result in result_list:
+			if result[0] == num:
+				print("Launching ", result[2], " in a web browser ...")
+				webbrowser.open_new_tab(result[2])
+	except:
+		pass
+
+def access_itunes_search(inputs):
+	try:
+		itunes_search(inputs)
+		print_itunes()
+	except:
+		pass
 
 
 ## Other classes, functions, etc. should go here
 # Main Code
-term = input("Enter a search term, or 'exit' to quit: ")
-
-while term != "exit":
-	itunes_search(term)
-	term = input("Enter a search term, or 'exit' to quit: ")
 
 if __name__ == "__main__": #below this line will run if it is a main
 # your control code for Part 4 (interactive search) should go here
-	pass
+
+	term = input("Enter a search term, or 'exit' to quit: ")
+	itunes_search(term)
+	print_itunes()
+
+	# term = input("Enter a number for more info, or another search term, or exit: ")
+	while term != "exit":
+
+		term = input("Enter a number for more info, or another search term, or exit: ")
+		access_itunes_web(term)
+		access_itunes_search(term)
+
+		# access_itunes_web(term)
+		# access_itunes_search(term)
+
+		# term = input("Enter a number for more info, or another search term, or exit: ")
