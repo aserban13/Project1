@@ -3,32 +3,6 @@ import requests
 import math
 # import sample_json.txt
 
-def opening_json_file(url):
-	sample_file = open(url, 'r')
-	sample_data = sample_file.read()
-	sample_load = json.loads(sample_data)
-
-	for text in range(len(sample_load)):
-		if sample_load[text]["wrapperType"] == "track":
-			if sample_load[text]["kind"] == "song":
-				# print("This is a song")
-				return Song(json_dict=sample_load[text])
-			elif sample_load[text]["kind"] == "feature-movie":
-				# print("This is a movie")
-				return Movie(json_dict=sample_load[text])
-			else:
-				# print("This is a media")
-				return Media(json_dict=sample_load[text])
-	sample_file.close()
-
-
-
-
-
-
-
-
-
 # Media:
 # ●	Instance variables: title, author, release year
 # ●	Methods: implement the following:
@@ -38,7 +12,10 @@ class Media:
 	# Use named arguments with defaults.
 	def __init__(self, title="No Title", author="No Author", release_year="0000", json_dict=None):
 		if json_dict is not None:
-			self.title = json_dict["collectionName"]
+			if json_dict["wrapperType"] == "track":
+				self.title = json_dict["trackName"]
+			else:
+				self.title = json_dict["collectionName"]
 			self.author = json_dict["artistName"]
 			self.release = json_dict["releaseDate"]
 			self.release = self.release[:4]
@@ -74,7 +51,6 @@ class Song(Media):
 	def __init__(self, title="No Title", author="No Author", release_year="0000", album="No Album", genre="None", track_len='0', json_dict=None):
 		if json_dict is not None:
 			super().__init__(title, author, release_year, json_dict)
-			self.title = json_dict["trackName"]
 			self.album = json_dict["collectionName"]
 			self.genre = json_dict["primaryGenreName"]
 			self.track = json_dict["trackTimeMillis"]
@@ -107,7 +83,6 @@ class Movie(Media):
 	def __init__(self, title="No Title", author="No Author", release_year="0000", rating="No Rating", movie_len="0", json_dict=None):
 		if json_dict is not None:
 			super().__init__(title, author, release_year, json_dict)
-			self.title = json_dict["trackName"]
 			self.rat = json_dict["contentAdvisoryRating"]
 			self.ml = json_dict["trackTimeMillis"]
 		else:
@@ -123,8 +98,38 @@ class Movie(Media):
 		answer = float(self.ml) / 60000
 		return round(answer)
 
+
+#Find 50 of the different types of media in itunes using the
+# query term
+#param: a key search string
+#return: a list of the 50 results that show up
+result_list = []
+def itunes_search(query="##!!"):
+	data = requests.get('https://itunes.apple.com/search?', params = { 'term' : query})
+	sample_load = json.loads(data.text)['results']
+# print(sample_load)
+	for text in range(len(sample_load)):
+		if sample_load[text]["wrapperType"] == "track":
+			if sample_load[text]["kind"] == "song":
+				results = "This is a song"
+				print(Song(json_dict=sample_load[text]))
+			elif sample_load[text]["kind"] == "feature-movie":
+				results = "This is a movie"
+				Movie(json_dict=sample_load[text])
+			else:
+				results= "This is a media"
+				result_list.append(results)
+
+
+
 ## Other classes, functions, etc. should go here
 # Main Code
+term = input("Enter a search term, or 'exit' to quit: ")
+
+while term != "exit":
+	itunes_search(term)
+	term = input("Enter a search term, or 'exit' to quit: ")
+
 if __name__ == "__main__": #below this line will run if it is a main
 # your control code for Part 4 (interactive search) should go here
 	pass

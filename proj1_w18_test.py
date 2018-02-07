@@ -2,6 +2,10 @@ import unittest
 import json
 import proj1_w18 as proj1 #changed name to proj1
 
+
+
+
+
 class TestMedia(unittest.TestCase):
 
 # This tests the __init__ function in the Media Class
@@ -38,8 +42,13 @@ class TestMedia(unittest.TestCase):
 
         m3 = proj1.Media("1999", "Prince", "3:19", json_dict=None)
         self.assertEqual(len(m3), 0)
-# Tests out json file and if it is extracting all the data
-# and outputs the correct information
+
+
+# Part Two Testing:
+# Tests out json file and if it is extracting the correct information
+# from the sample file for a media.
+
+
     def test_sample_med(self):
         url_name = "sample_json.json"
         sample_file = open((url_name), 'r')
@@ -53,7 +62,8 @@ class TestMedia(unittest.TestCase):
 
 
 
-        # self.assertEqual(m1.)
+
+
 
 
 
@@ -108,8 +118,14 @@ class TestSong(unittest.TestCase):
         # print(len(s1))
         self.assertEqual(len(s1), 0)
         self.assertEqual(len(s2), 187)
-# Tests out json file and if it is extracting all the data
-# and outputs the correct information
+
+
+# Part Two Testing:
+# Tests out json file and if it is extracting the correct information
+# from the sample file for a song.
+
+
+
     def test_sample_song(self):
         url_name = "sample_json.json"
         sample_file = open((url_name), 'r')
@@ -164,8 +180,13 @@ class TestMovie(unittest.TestCase):
 
         self.assertEqual(len(m1), 0)
         self.assertEqual(len(m2), 124)
-# Tests out json file and if it is extracting all the data
-# and outputs the correct information
+
+# Part Two Testing:
+# Tests out json file and if it is extracting the correct information
+# from the sample file for a movie.
+
+
+
     def test_sample_movie(self):
         url_name = "sample_json.json"
         sample_file = open((url_name), 'r')
@@ -178,4 +199,28 @@ class TestMovie(unittest.TestCase):
         self.assertEqual(m1.rat, "PG")
         self.assertEqual(m1.ml, 7451455)
         sample_file.close()
+
+
+
+
+
+
+# Part Three Testing:
+# With a list of terms will run the fucntion and the assert statemnt
+# makes sure that there is less than 50 results.
+# Since the expected behavior of the itunes API is return a max of
+# 50 results.
+
+
+
+
+    def test_json_itunes(self):
+        terms = {"baby", "sweet", "love", "moana",
+                "helter skelter", "Andreea", "##!!"
+                " ", "   "}
+        for term in terms:
+            proj1.itunes_search(term)
+            self.assertTrue(len(proj1.result_list) <= 50)
+
+
 unittest.main()  #don't remove this line!
