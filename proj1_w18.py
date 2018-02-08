@@ -20,7 +20,10 @@ class Media:
 			self.author = json_dict["artistName"]
 			self.release = json_dict["releaseDate"]
 			self.release = self.release[:4]
-			self.url = json_dict["trackViewUrl"]
+			try:
+				self.url = json_dict["collectionViewUrl"]
+			except:
+				pass
 		else:
 			self.title = title
 			self.author = author
@@ -56,6 +59,7 @@ class Song(Media):
 			self.album = json_dict["collectionName"]
 			self.genre = json_dict["primaryGenreName"]
 			self.track = json_dict["trackTimeMillis"]
+			self.url = json_dict['trackViewUrl']
 		else:
 			super().__init__(title, author, release_year, None)
 			self.album = album
@@ -86,7 +90,11 @@ class Movie(Media):
 		if json_dict is not None:
 			super().__init__(title, author, release_year, json_dict)
 			self.rat = json_dict["contentAdvisoryRating"]
-			self.ml = json_dict["trackTimeMillis"]
+			self.url = json_dict["trackViewUrl"]
+			try:
+				self.ml = json_dict["trackTimeMillis"]
+			except:
+				pass
 		else:
 			super().__init__(title, author, release_year, None)
 			self.rat = rating
@@ -113,7 +121,7 @@ media_list = []
 def itunes_search(query="##!!"):
 	data = requests.get('https://itunes.apple.com/search?', params = { 'term' : query})
 	sample_load = json.loads(data.text)['results']
-# print(sample_load)
+
 	num = 0
 	del result_list[:]
 	del song_list[:]
@@ -130,7 +138,6 @@ def itunes_search(query="##!!"):
 				song_list.append(tup)
 				result_list.append(tup)
 
-
 	for text in range(len(sample_load)):
 		if sample_load[text]["wrapperType"] == "track":
 			if sample_load[text]["kind"] == "feature-movie":
@@ -142,20 +149,19 @@ def itunes_search(query="##!!"):
 				movie_list.append(tup)
 				result_list.append(tup)
 
-
 	for text in range(len(sample_load)):
-		if sample_load[text]["kind"] != "feature-movie":
-			if sample_load[text]["kind"] != "song":
-				found_media = Media(json_dict=sample_load[text])
-				num += 1
-				tup = (num, found_media, found_media.url)
-				media = found_media
-				results= found_media
-				media_list.append(tup)
-				result_list.append(tup)
+		if sample_load[text]["wrapperType"] != "track":
+			found_media = Media(json_dict=sample_load[text])
+			num += 1
+			tup = (num, found_media, found_media.url)
+			media = found_media
+			results= found_media
+			media_list.append(tup)
+			result_list.append(tup)
 
 
 def print_itunes():
+	# if (len(song_list) != 0 and len(media_list) != 0 and len(movie_list) != 0):
 	print("\nSONGS")
 	for song in song_list:
 		print(song[0], song[1])
@@ -167,7 +173,9 @@ def print_itunes():
 	print("\nOTHER MEDIA")
 	for media in media_list:
 		print(media[0], media[1])
-	print("\n\n")
+		print("\n\n")
+	# else:
+	# 	print("There are no results for this search")
 
 def access_itunes_web(inputs):
 	try:
@@ -199,12 +207,10 @@ if __name__ == "__main__": #below this line will run if it is a main
 
 	# term = input("Enter a number for more info, or another search term, or exit: ")
 	while term != "exit":
-
-		term = input("Enter a number for more info, or another search term, or exit: ")
-		access_itunes_web(term)
-		access_itunes_search(term)
-
-		# access_itunes_web(term)
-		# access_itunes_search(term)
-
-		# term = input("Enter a number for more info, or another search term, or exit: ")
+		try:
+			term = input("Enter a number for more info, or another search term, or exit: ")
+			if term != "exit":
+				access_itunes_web(term)
+				access_itunes_search(term)
+		except:
+			print("This is not a proper entry.")
