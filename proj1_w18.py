@@ -2,12 +2,12 @@ import json
 import requests
 import math
 import webbrowser
-# import sample_json.txt
+
 
 # Media:
+# Media is the superclass of Song and Movie.
 # ●	Instance variables: title, author, release year
-# ●	Methods: implement the following:
-# ●	__len__: returns 0
+# ●	Methods: implement __init__, __str__, __len__
 class Media:
 	# takes title, author, and release year as arguments.
 	# Use named arguments with defaults.
@@ -29,29 +29,20 @@ class Media:
 			self.author = author
 			self.release = release_year[:4]
 
-# ●	__str__: returns "<title> by <author> (<release year>)", filling in the appropriate instance variables. For example "Bridget Jones's Diary (Unabridged) by Helen Fielding (2012)."
+# 	__str__: returns "<title> by <author> (<release year>)", filling in the appropriate instance variables. For example "Bridget Jones's Diary (Unabridged) by Helen Fielding (2012)."
 	def __str__(self):
 		printing = self.title + " by " + self.author + " (" + self.release + ")"
 		return printing
 
-# ●	__len__: returns 0
+# __len__: returns 0
 	def __len__(self):
 		return 0
 
-# sample_file_name = "sample_json.txt"
-# r = requests.get(sample_file_name)
-
-
-
-
-
-
-
-# ●	Additional instance variables: album, track length
-# ●	Methods:
-
+# Song is a subclass of Media
+# Additional instance variables: album, track length
+# Methods:implement __init__, __str__, __len__
 class Song(Media):
-# ●	__init__: takes title, author, release year, album, genre, and track length as arguments.
+# __init__: takes title, author, release year, album, genre, and track length as arguments.
 # Use named arguments with defaults. Call super( ) to initialize variables that belong to Media
 	def __init__(self, title="No Title", author="No Author", release_year="0000", album="No Album", genre="None", track_len='0', json_dict=None):
 		if json_dict is not None:
@@ -65,25 +56,20 @@ class Song(Media):
 			self.album = album
 			self.genre = genre
 			self.track= track_len
-# ●	__str__: add "[<genre>]" to the end of the output from Media.__str__( ).
+# __str__: add "[<genre>]" to the end of the output from Media.__str__( ).
 # For example "Hey Jude by The Beatles (1968) [Rock]"
 	def __str__(self, genre="No Genre"):
 		return super().__str__()+' ['+ self.genre + ']'
 
-# ●	__len__: return track length in seconds
+# __len__: return track length in seconds
 	def __len__(self):
 		answer = float(self.track) / 1000
 		return round(answer)
-
-
-
-
-
-
-
-# ●	Additional instance variables: rating, movie length
+# This Movie class is a sublcass of Media
+# Additional instance variables: rating, movie length
+# Methods: implement of __init__, __str__, __len__
 class Movie(Media):
-# ●	__init__: takes title, author, release year, rating,
+# __init__: takes title, author, release year, rating,
  # and movie length as arguments. Use named arguments with defaults.
  # Call super( ) to initialize variables that belong to Media.
 	def __init__(self, title="No Title", author="No Author", release_year="0000", rating="No Rating", movie_len="0", json_dict=None):
@@ -99,25 +85,27 @@ class Movie(Media):
 			super().__init__(title, author, release_year, None)
 			self.rat = rating
 			self.ml = movie_len
-# ●	__str__: add "[<rating>]" to the end of the output from Media.__str__( ).
+# __str__: add "[<rating>]" to the end of the output from Media.__str__( ).
 # For example "Jaws by Steven Speilberg (1975) [PG]"
 	def __str__(self):
 		return super().__str__() + ' ['+ self.rat + ']'
-# ●	__len__: return movie length in minutes (rounded to nearest minute)
+# __len__: return movie length in minutes (rounded to nearest minute)
 	def __len__(self):
 		answer = float(self.ml) / 60000
 		return round(answer)
 
 
-#Find 50 of the different types of media in itunes using the
-# query term
-#param: a key search string
-#return: a list of the 50 results that show up
+
+
+## Other classes, functions, etc. should go here
 result_list = []
 song_list = []
 movie_list = []
 media_list = []
-
+#Find all of the different types of media in itunes using the
+# query term
+#param: a key search string
+#return: nothing, will add objects into the result_list[], song_list[], movie_list[], and result_list[]
 def itunes_search(query="##!!"):
 	data = requests.get('https://itunes.apple.com/search?', params = { 'term' : query})
 	sample_load = json.loads(data.text)['results']
@@ -159,9 +147,10 @@ def itunes_search(query="##!!"):
 			media_list.append(tup)
 			result_list.append(tup)
 
-
+#Prints out all the song, other media, and the movies in order
+#param: nothing
+#return: the print results
 def print_itunes():
-	# if (len(song_list) != 0 and len(media_list) != 0 and len(movie_list) != 0):
 	print("\nSONGS")
 	for song in song_list:
 		print(song[0], song[1])
@@ -174,9 +163,11 @@ def print_itunes():
 	for media in media_list:
 		print(media[0], media[1])
 		print("\n\n")
-	# else:
-	# 	print("There are no results for this search")
 
+#Will access the website and open the website if the input is a number
+#Otherwise, it will exit out of the function
+#param: an input string type
+#return: a list of the 50 results that show up
 def access_itunes_web(inputs):
 	try:
 		num = int(inputs)
@@ -187,6 +178,10 @@ def access_itunes_web(inputs):
 	except:
 		pass
 
+#Function will take the input and use itunes_search(input) and print_itunes()
+# to get the result and the print out of the results
+#param: a key search string
+#return: nothing
 def access_itunes_search(inputs):
 	try:
 		itunes_search(inputs)
@@ -194,8 +189,6 @@ def access_itunes_search(inputs):
 	except:
 		pass
 
-
-## Other classes, functions, etc. should go here
 # Main Code
 
 if __name__ == "__main__": #below this line will run if it is a main

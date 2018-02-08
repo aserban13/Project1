@@ -5,7 +5,7 @@ import proj1_w18 as proj1 #changed name to proj1
 
 
 
-
+# These type of tests will specifically test Media objects
 class TestMedia(unittest.TestCase):
 
 # This tests the __init__ function in the Media Class
@@ -47,8 +47,6 @@ class TestMedia(unittest.TestCase):
 # Part Two Testing:
 # Tests out json file and if it is extracting the correct information
 # from the sample file for a media.
-
-
     def test_sample_med(self):
         url_name = "sample_json.json"
         sample_file = open((url_name), 'r')
@@ -72,9 +70,7 @@ class TestMedia(unittest.TestCase):
 
 
 
-
-
-
+# These type of tests will specifically test song objects
 class TestSong(unittest.TestCase):
 # This tests the __init__ function in the Song Class
     def testSonginit(self):
@@ -94,6 +90,7 @@ class TestSong(unittest.TestCase):
         self.assertEqual(s2.album, "1989")
         self.assertEqual(s2.genre, "pop")
         self.assertEqual(s2.track, "3:50")
+
 # This tests the __str__ function in the Song Class
     def testSongstr(self):
         s1 = proj1.Song()
@@ -108,8 +105,7 @@ class TestSong(unittest.TestCase):
         self.assertEqual(str(s2), "Blank Space by Taylor Swift (2014) [pop]")
         self.assertEqual(str(s1), "No Title by No Author (0000) [None]")
 
-# ISSUE: Can only round to full numbers,
-# not to decimal places
+
 # This tests the __len__ function in the Song Class
     def testSonglen(self):
         s1 = proj1.Song()
@@ -123,9 +119,6 @@ class TestSong(unittest.TestCase):
 # Part Two Testing:
 # Tests out json file and if it is extracting the correct information
 # from the sample file for a song.
-
-
-
     def test_sample_song(self):
         url_name = "sample_json.json"
         sample_file = open((url_name), 'r')
@@ -147,9 +140,9 @@ class TestSong(unittest.TestCase):
 
 
 
-
+# These type of tests will specifically test song objects
 class TestMovie(unittest.TestCase):
-
+# This tests the __init__ function in the Movie Class
     def testMovieinit(self):
         m1 = proj1.Movie()
         m2 = proj1.Movie("Jaws", "Steven Speilberg", "1975", "PG", "2.4")
@@ -166,6 +159,7 @@ class TestMovie(unittest.TestCase):
         self.assertEqual(m2.rat, "PG")
         self.assertEqual(m2.ml, "2.4")
 
+# This tests the __len__ function in the Movie Class
     def testMoviestr(self):
         m1 = proj1.Movie()
         m2 = proj1.Movie("Jaws", "Steven Speilberg", "1975", "PG", "7451455")
@@ -174,6 +168,7 @@ class TestMovie(unittest.TestCase):
         self.assertEqual(str(m1), "No Title by No Author (0000) [No Rating]")
         self.assertEqual(str(m2), "Jaws by Steven Speilberg (1975) [PG]")
 
+# This tests the __len__ function in the Movie Class
     def testMovielen(self):
         m1 = proj1.Movie()
         m2 = proj1.Movie("Jaws", "Steven Speilberg", "1975", "PG", "7451455")
@@ -184,9 +179,6 @@ class TestMovie(unittest.TestCase):
 # Part Two Testing:
 # Tests out json file and if it is extracting the correct information
 # from the sample file for a movie.
-
-
-
     def test_sample_movie(self):
         url_name = "sample_json.json"
         sample_file = open((url_name), 'r')
@@ -200,24 +192,18 @@ class TestMovie(unittest.TestCase):
         self.assertEqual(m1.ml, 7451455)
         sample_file.close()
 
-
-
-
-
-
 # Part Three Testing:
 # With a list of terms will run the fucntion and the assert statemnt
 # makes sure that there is less than 50 results.
 # Since the expected behavior of the itunes API is return a max of
 # 50 results.
-
-
-
-
     def test_json_itunes(self):
         terms = {"baby", "sweet", "love", "moana",
                 "helter skelter", "Andreea", "##!!"
-                " ", "   "}
+                " ", " california  ", "dog", "bobby",
+                "asdkla", "owkwdlsd", "water", "50",
+                "Iphone X", ",",
+                }
         for term in terms:
             proj1.itunes_search(term)
             self.assertTrue(len(proj1.result_list) <= 50)
